@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Build Your Stick — TTM Hockey</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Rajdhani:wght@300;400;500;600;700&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --black:#06080f;
+  --dark:#0c0f1a;
+  --panel:#111522;
+  --border:#1a2035;
+  --purple:#8b2fc9;
+  --mid-blue:#4060e0;
+  --navy:#0d2080;
+  --white:#eef2ff;
+  --muted:#4a5580;
+  --gold:#f5c842;
+  --grad:linear-gradient(120deg,#8b2fc9 0%,#4060e0 50%,#0d2080 100%);
+}
+html{scroll-behavior:smooth}
+body{background:var(--black);color:var(--white);font-family:'Rajdhani',sans-serif;overflow-x:hidden;cursor:none}
+
+/* CURSOR */
+#c-dot{position:fixed;z-index:9999;width:8px;height:8px;border-radius:50%;background:#8b2fc9;pointer-events:none;transform:translate(-50%,-50%)}
+#c-ring{position:fixed;z-index:9998;width:34px;height:34px;border-radius:50%;border:1.5px solid rgba(139,47,201,.5);pointer-events:none;transform:translate(-50%,-50%);transition:width .2s,height .2s}
+body:has(a:hover) #c-ring,body:has(button:hover) #c-ring,body:has(label:hover) #c-ring{width:50px;height:50px}
+
+/* NAV */
+nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:18px 48px;background:linear-gradient(to bottom,rgba(6,8,15,.96) 0%,transparent);backdrop-filter:blur(4px)}
+.nav-logo img{height:44px;filter:drop-shadow(0 0 12px rgba(139,47,201,.4))}
+.nav-links{display:flex;gap:36px;list-style:none}
+.nav-links a{font-family:'DM Mono',monospace;font-size:11px;letter-spacing:2px;color:var(--muted);text-decoration:none;text-transform:uppercase;transition:color .2s}
+.nav-links a:hover{color:var(--purple)}
+.nav-cta{font-family:'DM Mono',monospace;font-size:11px;letter-spacing:2px;text-transform:uppercase;padding:10px 24px;border:1.5px solid var(--purple);color:var(--purple);background:transparent;cursor:pointer;text-decoration:none;transition:background .2s,color .2s}
+.nav-cta:hover{background:var(--purple);color:#fff}
+
+/* BUILDER CONTAINER */
+.builder-wrap{min-height:100vh;padding:140px 48px 80px;position:relative;overflow:hidden}
+.builder-bg{position:absolute;inset:0;background:radial-gradient(ellipse 70% 60% at 60% 40%,rgba(139,47,201,.09) 0%,transparent 60%),var(--black);z-index:0}
+.grid-o{position:absolute;inset:0;background-image:linear-gradient(rgba(139,47,201,.025) 1px,transparent 1px),linear-gradient(90deg,rgba(139,47,201,.025) 1px,transparent 1px);background-size:64px 64px;z-index:0}
+
+.builder-inner{display:grid;grid-template-columns:1fr 1fr;gap:80px;max-width:1400px;margin:0 auto;position:relative;z-index:1}
+
+.builder-form{display:flex;flex-direction:column;gap:40px}
+.builder-section{display:flex;flex-direction:column;gap:20px}
+.builder-section h3{font-family:'Anton',sans-serif;font-size:28px;letter-spacing:1px;margin-bottom:8px}
+.builder-section p{font-size:14px;color:var(--muted);margin-bottom:12px}
+
+.option-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.option-grid.full{grid-template-columns:1fr}
+.option-grid.triple{grid-template-columns:repeat(3,1fr)}
+
+.option-btn{padding:14px 20px;background:var(--panel);border:1.5px solid var(--border);color:var(--white);font-family:'Rajdhani',sans-serif;font-size:14px;font-weight:500;border-radius:4px;cursor:pointer;transition:all .2s}
+.option-btn:hover{border-color:var(--purple);background:rgba(139,47,201,.15)}
+.option-btn.active{border-color:var(--purple);background:var(--purple);color:#fff}
+
+.option-input{appearance:none;width:100%;height:10px;background:var(--panel);border:1px solid var(--border);border-radius:4px;outline:none;-webkit-appearance:none}
+.option-input::-webkit-slider-thumb{appearance:none;-webkit-appearance:none;width:20px;height:20px;background:var(--grad);border-radius:50%;cursor:pointer}
+.option-input::-moz-range-thumb{width:20px;height:20px;background:var(--grad);border-radius:50%;cursor:pointer;border:none}
+
+.flex-display{display:flex;justify-content:space-between;align-items:center;font-size:14px}
+.flex-display .flex-val{font-family:'Anton',sans-serif;font-size:24px;color:var(--purple)}
+
+/* PREVIEW */
+.builder-preview{display:flex;flex-direction:column;gap:32px;position:sticky;top:160px}
+.preview-card{background:var(--panel);border:1px solid var(--border);padding:40px;border-radius:6px}
+.preview-title{font-family:'Anton',sans-serif;font-size:22px;margin-bottom:24px}
+
+.preview-visual{height:200px;display:flex;align-items:center;justify-content:center;background:var(--dark);border-radius:4px;margin-bottom:24px;position:relative;overflow:hidden}
+.stick-preview{width:90%;height:80%;position:relative}
+.stick-shaft{width:100%;height:12px;background:var(--grad);border-radius:2px;position:absolute;top:50%;transform:translateY(-50%);box-shadow:0 0 20px rgba(139,47,201,.3)}
+.stick-blade{width:40px;height:60px;background:rgba(139,47,201,.4);position:absolute;right:0;top:50%;transform:translateY(-50%);border-radius:0 4px 4px 0}
+
+.preview-specs{display:flex;flex-direction:column;gap:12px}
+.spec-line{display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px solid var(--border);font-size:14px}
+.spec-line:last-child{border-bottom:none}
+.spec-key{color:var(--muted)}
+.spec-val{font-family:'Anton',sans-serif;font-size:16px;color:var(--white)}
+
+.preview-price{margin-top:20px;padding:20px;background:rgba(139,47,201,.1);border-radius:4px}
+.price-label{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px}
+.price-amount{font-family:'Anton',sans-serif;font-size:44px;color:var(--purple)}
+
+.btn-add-builder{width:100%;padding:18px;background:var(--grad);border:none;color:#fff;font-family:'Anton',sans-serif;font-size:18px;letter-spacing:2px;border-radius:4px;cursor:pointer;transition:filter .2s,transform .15s;margin-top:24px}
+.btn-add-builder:hover{filter:brightness(1.2);transform:translateY(-2px)}
+
+.back-link{margin-top:40px;font-family:'DM Mono',monospace;font-size:12px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);text-decoration:none;transition:color .2s}
+.back-link:hover{color:var(--purple)}
+
+/* ANIMATIONS */
+@keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+.builder-form{animation:fadeUp .6s .2s both}
+.builder-preview{animation:fadeUp .6s .4s both}
+
+/* MOBILE */
+@media(max-width:1000px){
+  nav{padding:14px 24px}
+  .nav-links{gap:20px;font-size:10px}
+  .builder-inner{grid-template-columns:1fr;gap:48px;padding:120px 24px 60px}
+  .builder-preview{position:static;top:auto}
+  .option-grid.triple{grid-template-columns:1fr 1fr}
+}
+</style>
+</head>
+<body>
+
+<!-- CURSOR -->
+<div id="c-dot"></div>
+<div id="c-ring"></div>
+
+<!-- NAV -->
+<nav>
+  <a href="ttm-hockey.html" class="nav-logo">
+    <img id="logo-img" src="" alt="TTM Hockey">
+  </a>
+  <ul class="nav-links">
+    <li><a href="build-your-stick-ttm.html">Build Your Stick</a></li>
+    <li><a href="ttm-hockey.html#specs">Specs</a></li>
+    <li><a href="ttm-hockey.html#grip">Grip Options</a></li>
+    <li><a href="ttm-hockey.html#why">Why TTM</a></li>
+    <li><a href="ttm-hockey.html#compare">Compare</a></li>
+  </ul>
+  <a href="ttm-hockey.html" class="nav-cta">Back to Site</a>
+</nav>
+
+<!-- BUILDER -->
+<div class="builder-wrap">
+  <div class="builder-bg"></div>
+  <div class="grid-o"></div>
+  
+  <div class="builder-inner">
+    <!-- FORM SECTION -->
+    <div class="builder-form">
+      <h2 style="font-family:'Anton',sans-serif;font-size:48px;margin-bottom:8px">BUILD YOUR <span style="background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">STICK</span></h2>
+      <p style="color:var(--muted);font-size:16px;margin-bottom:32px">Customize every aspect: flex, curve, kickpoint, hand, and grip. Built to order, shipped direct.</p>
+
+      <!-- FLEX CATEGORY -->
+      <div class="builder-section">
+        <h3>Choose Your Flex</h3>
+        <p>Select Senior (75–100) or Intermediate (50–60)</p>
+        
+        <div class="option-grid full">
+          <div class="option-grid">
+            <button class="option-btn active" data-flex-type="senior">Senior Flex</button>
+            <button class="option-btn" data-flex-type="intermediate">Intermediate</button>
+          </div>
+        </div>
+
+        <div id="senior-flex" style="display:block">
+          <div class="flex-display" style="margin-bottom:16px">
+            <span>Senior Flex (70–100)</span>
+            <span class="flex-val" id="senior-val">85</span>
+          </div>
+          <input type="range" class="option-input" id="senior-slider" min="70" max="100" value="85" step="5">
+          <div class="option-grid triple" style="margin-top:14px">
+            <button class="option-btn" data-flex="75">75</button>
+            <button class="option-btn active" data-flex="85">85</button>
+            <button class="option-btn" data-flex="100">100</button>
+          </div>
+        </div>
+
+        <div id="intermediate-flex" style="display:none">
+          <div class="flex-display" style="margin-bottom:16px">
+            <span>Intermediate Flex (50–60)</span>
+            <span class="flex-val" id="intermediate-val">55</span>
+          </div>
+          <input type="range" class="option-input" id="intermediate-slider" min="50" max="60" value="55" step="5">
+          <div class="option-grid triple" style="margin-top:14px">
+            <button class="option-btn" data-flex="50">50</button>
+            <button class="option-btn" data-flex="55">55</button>
+            <button class="option-btn" data-flex="60">60</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- CURVE CATEGORY -->
+      <div class="builder-section">
+        <h3>Blade Curve</h3>
+        <p>14 professional curves to choose from</p>
+        <div class="option-grid triple">
+          <button class="option-btn active" data-curve="P92">P92</button>
+          <button class="option-btn" data-curve="P88">P88</button>
+          <button class="option-btn" data-curve="P28">P28</button>
+          <button class="option-btn" data-curve="PM9">PM9</button>
+          <button class="option-btn" data-curve="P91A">P91A</button>
+          <button class="option-btn" data-curve="P02">P02</button>
+          <button class="option-btn" data-curve="P14">P14</button>
+          <button class="option-btn" data-curve="P92M">P92M</button>
+          <button class="option-btn" data-curve="P90TM">P90TM</button>
+          <button class="option-btn" data-curve="P77">P77</button>
+          <button class="option-btn" data-curve="OVI">OVI</button>
+          <button class="option-btn" data-curve="P28M">P28M</button>
+          <button class="option-btn" data-curve="P86">P86</button>
+          <button class="option-btn" data-curve="P17M">P17M</button>
+        </div>
+      </div>
+
+      <!-- KICKPOINT CATEGORY -->
+      <div class="builder-section">
+        <h3>Kickpoint</h3>
+        <p>Affects release point and feel</p>
+        <div class="option-grid">
+          <button class="option-btn active" data-kickpoint="High">High</button>
+          <button class="option-btn" data-kickpoint="Mid">Mid</button>
+          <button class="option-btn" data-kickpoint="Low">Low</button>
+          <button class="option-btn" data-kickpoint="Hybrid">Hybrid</button>
+        </div>
+      </div>
+
+      <!-- HAND CATEGORY -->
+      <div class="builder-section">
+        <h3>Shooting Hand</h3>
+        <p>Right or Left handed</p>
+        <div class="option-grid">
+          <button class="option-btn active" data-hand="Right">Right Hand</button>
+          <button class="option-btn" data-hand="Left">Left Hand</button>
+        </div>
+      </div>
+
+      <!-- GRIP CATEGORY -->
+      <div class="builder-section">
+        <h3>Grip Texture</h3>
+        <p>Choose your preferred grip feel</p>
+        <div class="option-grid">
+          <button class="option-btn active" data-grip="Tactile">Tactile Grip</button>
+          <button class="option-btn" data-grip="Candy Cane">Candy Cane</button>
+          <button class="option-btn" data-grip="Ridge Tech">Ridge Tech</button>
+          <button class="option-btn" data-grip="Spiral">Spiral Corners</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- PREVIEW SECTION -->
+    <div class="builder-preview">
+      <div class="preview-card">
+        <div class="preview-title">Your Custom Stick</div>
+        
+        <div class="preview-visual">
+          <div class="stick-preview">
+            <div class="stick-shaft"></div>
+            <div class="stick-blade"></div>
+          </div>
+        </div>
+
+        <div class="preview-specs">
+          <div class="spec-line">
+            <span class="spec-key">Flex</span>
+            <span class="spec-val" id="preview-flex">85 Senior</span>
+          </div>
+          <div class="spec-line">
+            <span class="spec-key">Curve</span>
+            <span class="spec-val" id="preview-curve">P92</span>
+          </div>
+          <div class="spec-line">
+            <span class="spec-key">Kickpoint</span>
+            <span class="spec-val" id="preview-kick">High</span>
+          </div>
+          <div class="spec-line">
+            <span class="spec-key">Hand</span>
+            <span class="spec-val" id="preview-hand">Right</span>
+          </div>
+          <div class="spec-line">
+            <span class="spec-key">Grip</span>
+            <span class="spec-val" id="preview-grip">Tactile Grip</span>
+          </div>
+        </div>
+
+        <div class="preview-price">
+          <div class="price-label">TTM Custom Stick</div>
+          <div class="price-amount">$179</div>
+          <p style="font-size:12px;color:var(--muted);margin-top:8px">Factory-built to your specs. Ships in 5–7 business days.</p>
+        </div>
+
+        <button class="btn-add-builder">Add to Cart</button>
+        <a href="ttm-hockey.html" class="back-link">← Back to Main Site</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // CURSOR
+  const dot = document.getElementById('c-dot');
+  const ring = document.getElementById('c-ring');
+  let mx = 0, my = 0, rx = 0, ry = 0;
+
+  document.addEventListener('mousemove', e => {
+    mx = e.clientX; my = e.clientY;
+  });
+
+  (function loop() {
+    dot.style.left = mx + 'px';
+    dot.style.top = my + 'px';
+    rx += (mx - rx) * 0.12;
+    ry += (my - ry) * 0.12;
+    ring.style.left = rx + 'px';
+    ring.style.top = ry + 'px';
+    requestAnimationFrame(loop);
+  })();
+
+  // STATE
+  let config = {
+    flexType: 'senior',
+    flex: 85,
+    curve: 'P92',
+    kickpoint: 'High',
+    hand: 'Right',
+    grip: 'Tactile Grip'
+  };
+
+  // UPDATE PREVIEW
+  function updatePreview() {
+    document.getElementById('preview-flex').textContent = config.flex + (config.flexType === 'senior' ? ' Senior' : ' Intermediate');
+    document.getElementById('preview-curve').textContent = config.curve;
+    document.getElementById('preview-kick').textContent = config.kickpoint;
+    document.getElementById('preview-hand').textContent = config.hand;
+    document.getElementById('preview-grip').textContent = config.grip;
+  }
+
+  // FLEX TYPE TOGGLE
+  document.querySelectorAll('[data-flex-type]').forEach(btn => {
+    btn.addEventListener('click', e => {
+      const type = e.target.dataset.flexType;
+      config.flexType = type;
+      
+      document.querySelectorAll('[data-flex-type]').forEach(b => b.classList.remove('active'));
+      e.target.classList.add('active');
+      
+      document.getElementById('senior-flex').style.display = type === 'senior' ? 'block' : 'none';
+      document.getElementById('intermediate-flex').style.display = type === 'intermediate' ? 'block' : 'none';
+      
+      if (type === 'senior') {
+        config.flex = 85;
+        document.getElementById('senior-slider').value = 85;
+        document.getElementById('senior-val').textContent = 85;
+      } else {
+        config.flex = 55;
+        document.getElementById('intermediate-slider').value = 55;
+        document.getElementById('intermediate-val').textContent = 55;
+      }
+      updatePreview();
+    });
+  });
+
+  // FLEX SLIDERS
+  document.getElementById('senior-slider').addEventListener('input', e => {
+    config.flex = parseInt(e.target.value);
+    document.getElementById('senior-val').textContent = config.flex;
+    updatePreview();
+  });
+
+  document.getElementById('intermediate-slider').addEventListener('input', e => {
+    config.flex = parseInt(e.target.value);
+    document.getElementById('intermediate-val').textContent = config.flex;
+    updatePreview();
+  });
+
+  // OPTION BUTTONS
+  document.querySelectorAll('[data-flex]:not([data-flex-type])').forEach(btn => {
+    btn.addEventListener('click', e => {
+      config.flex = parseInt(e.target.dataset.flex);
+      document.querySelectorAll('[data-flex]:not([data-flex-type])').forEach(b => b.classList.remove('active'));
+      e.target.classList.add('active');
+      const slider = config.flexType === 'senior' ? document.getElementById('senior-slider') : document.getElementById('intermediate-slider');
+      slider.value = config.flex;
+      const val = config.flexType === 'senior' ? document.getElementById('senior-val') : document.getElementById('intermediate-val');
+      val.textContent = config.flex;
+      updatePreview();
+    });
+  });
+
+  document.querySelectorAll('[data-curve]').forEach(btn => {
+    btn.addEventListener('click', e => {
+      config.curve = e.target.dataset.curve;
+      document.querySelectorAll('[data-curve]').forEach(b => b.classList.remove('active'));
+      e.target.classList.add('active');
+      updatePreview();
+    });
+  });
+
+  document.querySelectorAll('[data-kickpoint]').forEach(btn => {
+    btn.addEventListener('click', e => {
+      config.kickpoint = e.target.dataset.kickpoint;
+      document.querySelectorAll('[data-kickpoint]').forEach(b => b.classList.remove('active'));
+      e.target.classList.add('active');
+      updatePreview();
+    });
+  });
+
+  document.querySelectorAll('[data-hand]').forEach(btn => {
+    btn.addEventListener('click', e => {
+      config.hand = e.target.dataset.hand;
+      document.querySelectorAll('[data-hand]').forEach(b => b.classList.remove('active'));
+      e.target.classList.add('active');
+      updatePreview();
+    });
+  });
+
+  document.querySelectorAll('[data-grip]').forEach(btn => {
+    btn.addEventListener('click', e => {
+      config.grip = e.target.dataset.grip;
+      document.querySelectorAll('[data-grip]').forEach(b => b.classList.remove('active'));
+      e.target.classList.add('active');
+      updatePreview();
+    });
+  });
+
+  // ADD TO CART
+  document.querySelector('.btn-add-builder').addEventListener('click', () => {
+    alert(`Added to cart:\n\nFlex: ${config.flex} ${config.flexType === 'senior' ? 'Senior' : 'Intermediate'}\nCurve: ${config.curve}\nKickpoint: ${config.kickpoint}\nHand: ${config.hand}\nGrip: ${config.grip}\n\nPrice: $179`);
+  });
+</script>
+</body>
+</html>
