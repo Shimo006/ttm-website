@@ -1,0 +1,1026 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BREAKAWAY — Direct Hockey Co.</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:ital,wght@0,300;0,400;0,500;1,300&family=Barlow+Condensed:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --black:   #07090e;
+    --dark:    #0d1018;
+    --panel:   #12161f;
+    --border:  #1e2530;
+    --ice:     #c8e8f5;
+    --cyan:    #00c8f0;
+    --hot:     #ff2c4b;
+    --white:   #f0f4f8;
+    --muted:   #5a6a7a;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--black);
+    color: var(--white);
+    font-family: 'Barlow Condensed', sans-serif;
+    overflow-x: hidden;
+    cursor: none;
+  }
+
+  /* ── Custom cursor ── */
+  .cursor {
+    position: fixed; top: 0; left: 0; z-index: 9999;
+    pointer-events: none;
+  }
+  .cursor-dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: var(--cyan);
+    position: absolute; transform: translate(-50%,-50%);
+    transition: transform .1s;
+  }
+  .cursor-ring {
+    width: 36px; height: 36px; border-radius: 50%;
+    border: 1.5px solid var(--cyan);
+    position: absolute; transform: translate(-50%,-50%);
+    opacity: .5;
+    transition: transform .18s ease, width .2s ease, height .2s ease, opacity .2s;
+  }
+  body:has(a:hover) .cursor-ring,
+  body:has(button:hover) .cursor-ring {
+    width: 52px; height: 52px; opacity: .9;
+  }
+
+  /* ── Nav ── */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 20px 48px;
+    background: linear-gradient(to bottom, rgba(7,9,14,.95) 0%, transparent 100%);
+    backdrop-filter: blur(2px);
+  }
+  .nav-logo {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 28px; letter-spacing: 4px;
+    color: var(--white);
+    text-decoration: none;
+  }
+  .nav-logo span { color: var(--cyan); }
+  .nav-links { display: flex; gap: 36px; list-style: none; }
+  .nav-links a {
+    font-family: 'DM Mono', monospace;
+    font-size: 12px; letter-spacing: 2px;
+    color: var(--muted); text-decoration: none; text-transform: uppercase;
+    transition: color .2s;
+  }
+  .nav-links a:hover { color: var(--cyan); }
+  .nav-cta {
+    font-family: 'DM Mono', monospace; font-size: 12px;
+    letter-spacing: 2px; text-transform: uppercase;
+    padding: 10px 22px;
+    border: 1.5px solid var(--cyan); color: var(--cyan);
+    background: transparent; cursor: none;
+    transition: background .2s, color .2s;
+    text-decoration: none;
+  }
+  .nav-cta:hover { background: var(--cyan); color: var(--black); }
+
+  /* ── Hero ── */
+  #hero {
+    min-height: 100vh;
+    display: flex; flex-direction: column; justify-content: flex-end;
+    padding: 0 48px 80px;
+    position: relative; overflow: hidden;
+  }
+
+  .hero-bg {
+    position: absolute; inset: 0; z-index: 0;
+    background:
+      radial-gradient(ellipse 80% 60% at 65% 40%, rgba(0,200,240,.07) 0%, transparent 60%),
+      radial-gradient(ellipse 40% 60% at 20% 80%, rgba(255,44,75,.05) 0%, transparent 60%),
+      var(--black);
+  }
+
+  .ice-lines {
+    position: absolute; inset: 0; z-index: 0; overflow: hidden;
+  }
+  .ice-lines::before {
+    content: '';
+    position: absolute;
+    width: 200%; height: 2px;
+    background: linear-gradient(90deg, transparent 0%, var(--cyan) 40%, var(--cyan) 60%, transparent 100%);
+    opacity: .06;
+    top: 38%; left: -50%;
+    transform: rotate(-12deg);
+  }
+  .ice-lines::after {
+    content: '';
+    position: absolute;
+    width: 200%; height: 1px;
+    background: linear-gradient(90deg, transparent 0%, var(--hot) 50%, transparent 100%);
+    opacity: .08;
+    top: 62%; left: -50%;
+    transform: rotate(-12deg);
+  }
+
+  .grid-overlay {
+    position: absolute; inset: 0; z-index: 0;
+    background-image:
+      linear-gradient(rgba(0,200,240,.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,200,240,.03) 1px, transparent 1px);
+    background-size: 60px 60px;
+  }
+
+  .hero-tag {
+    font-family: 'DM Mono', monospace; font-size: 11px;
+    letter-spacing: 4px; text-transform: uppercase;
+    color: var(--cyan); margin-bottom: 24px;
+    position: relative; z-index: 1;
+    opacity: 0; animation: fadeUp .6s .2s forwards;
+  }
+  .hero-tag::before {
+    content: '//'; margin-right: 8px; opacity: .5;
+  }
+
+  h1 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(80px, 14vw, 200px);
+    line-height: .92; letter-spacing: -2px;
+    position: relative; z-index: 1;
+    opacity: 0; animation: fadeUp .7s .35s forwards;
+  }
+  h1 .line2 { color: var(--cyan); display: block; }
+  h1 .line3 { color: var(--muted); font-size: 40%; letter-spacing: 20px; }
+
+  .hero-sub {
+    max-width: 520px; margin-top: 32px;
+    font-size: 18px; line-height: 1.6; font-weight: 300;
+    color: rgba(240,244,248,.6);
+    position: relative; z-index: 1;
+    opacity: 0; animation: fadeUp .7s .5s forwards;
+  }
+
+  .hero-actions {
+    display: flex; gap: 20px; margin-top: 44px; align-items: center;
+    position: relative; z-index: 1;
+    opacity: 0; animation: fadeUp .7s .65s forwards;
+  }
+  .btn-primary {
+    font-family: 'Bebas Neue', sans-serif; font-size: 20px; letter-spacing: 3px;
+    padding: 16px 44px;
+    background: var(--cyan); color: var(--black);
+    border: none; cursor: none;
+    clip-path: polygon(0 0, calc(100% - 12px) 0, 100% 12px, 100% 100%, 12px 100%, 0 calc(100% - 12px));
+    transition: filter .2s, transform .15s;
+    text-decoration: none; display: inline-block;
+  }
+  .btn-primary:hover { filter: brightness(1.15); transform: translateY(-2px); }
+  .btn-ghost {
+    font-family: 'DM Mono', monospace; font-size: 12px; letter-spacing: 2px;
+    text-transform: uppercase; color: var(--white); text-decoration: none;
+    display: flex; align-items: center; gap: 10px;
+    transition: color .2s;
+  }
+  .btn-ghost:hover { color: var(--cyan); }
+  .btn-ghost .arrow {
+    width: 36px; height: 1px; background: currentColor; position: relative;
+    transition: width .2s;
+  }
+  .btn-ghost:hover .arrow { width: 52px; }
+  .btn-ghost .arrow::after {
+    content: ''; position: absolute; right: 0; top: -4px;
+    border: 4px solid transparent;
+    border-left-color: currentColor;
+  }
+
+  .hero-stat-bar {
+    position: absolute; right: 48px; bottom: 80px; z-index: 1;
+    display: flex; flex-direction: column; gap: 24px; align-items: flex-end;
+    opacity: 0; animation: fadeLeft .7s .8s forwards;
+  }
+  .stat {
+    text-align: right;
+  }
+  .stat-num {
+    font-family: 'Bebas Neue', sans-serif; font-size: 42px; color: var(--white);
+    line-height: 1; display: block;
+  }
+  .stat-num em { color: var(--cyan); font-style: normal; }
+  .stat-label {
+    font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 2px;
+    text-transform: uppercase; color: var(--muted);
+  }
+  .stat-divider {
+    width: 1px; height: 40px; background: var(--border);
+  }
+
+  /* ── Ticker ── */
+  .ticker {
+    background: var(--cyan); color: var(--black);
+    padding: 12px 0; overflow: hidden; white-space: nowrap;
+  }
+  .ticker-inner {
+    display: inline-flex; gap: 0;
+    animation: ticker 28s linear infinite;
+  }
+  .ticker-item {
+    font-family: 'Bebas Neue', sans-serif; font-size: 16px; letter-spacing: 4px;
+    padding: 0 40px; display: inline-flex; align-items: center; gap: 16px;
+  }
+  .ticker-dot { width: 6px; height: 6px; background: var(--black); border-radius: 50%; opacity: .4; }
+
+  /* ── Section Basics ── */
+  section { padding: 120px 48px; }
+  .section-label {
+    font-family: 'DM Mono', monospace; font-size: 11px;
+    letter-spacing: 4px; text-transform: uppercase;
+    color: var(--cyan); margin-bottom: 16px;
+  }
+  .section-label::before { content: '[ '; }
+  .section-label::after  { content: ' ]'; }
+
+  h2 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(48px, 6vw, 88px);
+    line-height: .95; letter-spacing: 1px;
+    margin-bottom: 24px;
+  }
+  h2 em { font-style: normal; color: var(--cyan); }
+
+  /* ── Why Us ── */
+  #why {
+    background: var(--dark);
+    position: relative; overflow: hidden;
+  }
+  #why::before {
+    content: 'WHY';
+    position: absolute; right: -20px; top: 50%; transform: translateY(-50%);
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 280px; color: rgba(255,255,255,.015);
+    pointer-events: none; white-space: nowrap; line-height: 1;
+  }
+
+  .why-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0;
+    margin-top: 72px;
+    border: 1px solid var(--border);
+  }
+  .why-card {
+    padding: 48px 44px;
+    border-right: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    position: relative; overflow: hidden;
+    transition: background .3s;
+  }
+  .why-card:hover { background: rgba(0,200,240,.04); }
+  .why-card:nth-child(even) { border-right: none; }
+  .why-card:nth-child(3), .why-card:nth-child(4) { border-bottom: none; }
+
+  .why-num {
+    font-family: 'Bebas Neue', sans-serif; font-size: 80px;
+    color: var(--border); line-height: 1;
+    position: absolute; top: 24px; right: 32px;
+    transition: color .3s;
+  }
+  .why-card:hover .why-num { color: rgba(0,200,240,.15); }
+
+  .why-icon {
+    width: 48px; height: 48px; margin-bottom: 24px;
+    color: var(--cyan);
+  }
+  .why-card h3 {
+    font-family: 'Bebas Neue', sans-serif; font-size: 32px; letter-spacing: 1px;
+    margin-bottom: 14px;
+  }
+  .why-card p {
+    font-size: 16px; font-weight: 300; line-height: 1.65;
+    color: rgba(240,244,248,.55); max-width: 340px;
+  }
+  .why-card .tag {
+    display: inline-block; margin-top: 20px;
+    font-family: 'DM Mono', monospace; font-size: 10px;
+    letter-spacing: 2px; text-transform: uppercase;
+    padding: 5px 12px; border: 1px solid var(--cyan);
+    color: var(--cyan);
+  }
+
+  /* ── Products ── */
+  #products { background: var(--black); }
+  .products-header {
+    display: flex; justify-content: space-between; align-items: flex-end;
+    margin-bottom: 64px;
+  }
+  .products-header .see-all {
+    font-family: 'DM Mono', monospace; font-size: 11px;
+    letter-spacing: 2px; text-transform: uppercase;
+    color: var(--muted); text-decoration: none;
+    display: flex; align-items: center; gap: 8px;
+    transition: color .2s;
+  }
+  .products-header .see-all:hover { color: var(--cyan); }
+
+  .product-grid {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 2px;
+  }
+  .product-card {
+    background: var(--panel);
+    padding: 40px 36px;
+    position: relative; overflow: hidden;
+    transition: background .25s;
+    cursor: none;
+  }
+  .product-card:hover { background: #161c27; }
+  .product-card::after {
+    content: '';
+    position: absolute; bottom: 0; left: 0; right: 0; height: 2px;
+    background: linear-gradient(90deg, var(--cyan), transparent);
+    transform: scaleX(0); transform-origin: left;
+    transition: transform .35s ease;
+  }
+  .product-card:hover::after { transform: scaleX(1); }
+
+  .product-badge {
+    font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 2px;
+    text-transform: uppercase; padding: 5px 10px;
+    margin-bottom: 32px; display: inline-block;
+  }
+  .badge-new { background: var(--cyan); color: var(--black); }
+  .badge-hot { background: var(--hot); color: var(--white); }
+  .badge-pro { background: transparent; border: 1px solid var(--muted); color: var(--muted); }
+
+  .product-visual {
+    height: 160px; display: flex; align-items: center; justify-content: center;
+    margin-bottom: 32px; position: relative;
+  }
+  .stick-svg { width: 100%; height: 100%; }
+
+  .product-name {
+    font-family: 'Bebas Neue', sans-serif; font-size: 36px; letter-spacing: 1px;
+    margin-bottom: 8px;
+  }
+  .product-model {
+    font-family: 'DM Mono', monospace; font-size: 11px;
+    color: var(--muted); letter-spacing: 2px; margin-bottom: 20px;
+  }
+  .product-specs {
+    display: flex; flex-direction: column; gap: 8px; margin-bottom: 28px;
+  }
+  .spec-row {
+    display: flex; justify-content: space-between; align-items: center;
+    font-size: 14px; padding: 6px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .spec-key { color: var(--muted); font-weight: 300; }
+  .spec-val { font-weight: 600; }
+  .product-price {
+    display: flex; align-items: baseline; gap: 12px; margin-bottom: 24px;
+  }
+  .price-now {
+    font-family: 'Bebas Neue', sans-serif; font-size: 44px; color: var(--white);
+  }
+  .price-retail {
+    font-family: 'DM Mono', monospace; font-size: 13px;
+    color: var(--muted); text-decoration: line-through;
+  }
+  .price-save {
+    font-family: 'DM Mono', monospace; font-size: 11px;
+    letter-spacing: 1px; color: var(--cyan); background: rgba(0,200,240,.1);
+    padding: 2px 8px;
+  }
+  .btn-add {
+    width: 100%; padding: 14px;
+    background: transparent; border: 1px solid var(--border);
+    color: var(--white); font-family: 'Bebas Neue', sans-serif;
+    font-size: 18px; letter-spacing: 3px; cursor: none;
+    transition: border-color .2s, background .2s, color .2s;
+  }
+  .btn-add:hover {
+    border-color: var(--cyan); background: var(--cyan); color: var(--black);
+  }
+
+  /* ── How It Works ── */
+  #how { background: var(--dark); }
+  .how-steps {
+    display: grid; grid-template-columns: repeat(4, 1fr);
+    gap: 0; margin-top: 72px;
+    position: relative;
+  }
+  .how-steps::before {
+    content: '';
+    position: absolute; top: 32px; left: calc(12.5% + 16px); right: calc(12.5% + 16px);
+    height: 1px; background: linear-gradient(90deg, var(--cyan), var(--border), var(--border), var(--cyan));
+    opacity: .3;
+  }
+
+  .step {
+    padding: 0 32px 0 0; position: relative;
+  }
+  .step-num {
+    width: 64px; height: 64px; border: 1.5px solid var(--border);
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Bebas Neue', sans-serif; font-size: 28px; color: var(--cyan);
+    margin-bottom: 32px; background: var(--dark);
+    position: relative; z-index: 1;
+    transition: border-color .3s, background .3s;
+  }
+  .step:hover .step-num {
+    border-color: var(--cyan); background: rgba(0,200,240,.08);
+  }
+  .step h3 {
+    font-family: 'Bebas Neue', sans-serif; font-size: 28px; letter-spacing: 1px;
+    margin-bottom: 12px;
+  }
+  .step p {
+    font-size: 15px; font-weight: 300; line-height: 1.7;
+    color: rgba(240,244,248,.5);
+  }
+
+  /* ── Comparison ── */
+  #compare {
+    background: var(--black);
+    position: relative; overflow: hidden;
+  }
+  .compare-table {
+    width: 100%; margin-top: 64px; border-collapse: collapse;
+  }
+  .compare-table th, .compare-table td {
+    padding: 18px 24px; text-align: center;
+    border-bottom: 1px solid var(--border);
+    font-size: 15px;
+  }
+  .compare-table th {
+    font-family: 'Bebas Neue', sans-serif; font-size: 22px; letter-spacing: 2px;
+    color: var(--muted); padding-bottom: 24px;
+  }
+  .compare-table th.us {
+    color: var(--cyan);
+    background: rgba(0,200,240,.04);
+    border-bottom: 2px solid var(--cyan);
+    border-top-left-radius: 2px; border-top-right-radius: 2px;
+  }
+  .compare-table td.us {
+    background: rgba(0,200,240,.03);
+    color: var(--white);
+    font-weight: 600;
+  }
+  .compare-table td:first-child {
+    text-align: left; color: var(--muted); font-size: 14px;
+    font-family: 'DM Mono', monospace; letter-spacing: 1px;
+  }
+  .check { color: var(--cyan); font-size: 18px; }
+  .cross { color: var(--muted); opacity: .4; font-size: 18px; }
+  .compare-table tr:last-child td { border-bottom: none; }
+
+  /* ── CTA Banner ── */
+  #cta {
+    background: var(--cyan); padding: 100px 48px;
+    position: relative; overflow: hidden;
+  }
+  #cta::before {
+    content: 'BREAKAWAY';
+    position: absolute; font-family: 'Bebas Neue', sans-serif;
+    font-size: 260px; color: rgba(0,0,0,.07);
+    white-space: nowrap; top: 50%; left: 50%;
+    transform: translate(-50%, -50%); pointer-events: none;
+  }
+  .cta-inner {
+    position: relative; z-index: 1; display: flex;
+    justify-content: space-between; align-items: center;
+  }
+  .cta-left h2 {
+    color: var(--black); margin-bottom: 8px;
+    font-size: clamp(44px, 5vw, 76px);
+  }
+  .cta-left p {
+    font-size: 16px; color: rgba(0,0,0,.55); font-weight: 300;
+    max-width: 440px; line-height: 1.65;
+  }
+  .btn-dark {
+    font-family: 'Bebas Neue', sans-serif; font-size: 22px; letter-spacing: 3px;
+    padding: 18px 52px; background: var(--black); color: var(--cyan);
+    border: none; cursor: none; white-space: nowrap;
+    clip-path: polygon(0 0, calc(100% - 14px) 0, 100% 14px, 100% 100%, 14px 100%, 0 calc(100% - 14px));
+    transition: background .2s, color .2s;
+    text-decoration: none; display: inline-block;
+  }
+  .btn-dark:hover { background: var(--dark); }
+
+  /* ── Footer ── */
+  footer {
+    background: var(--dark); border-top: 1px solid var(--border);
+    padding: 64px 48px 40px;
+  }
+  .footer-top {
+    display: grid; grid-template-columns: 2fr 1fr 1fr 1fr;
+    gap: 48px; margin-bottom: 64px;
+  }
+  .footer-brand .logo {
+    font-family: 'Bebas Neue', sans-serif; font-size: 32px; letter-spacing: 4px;
+    color: var(--white); margin-bottom: 16px; display: block;
+  }
+  .footer-brand .logo span { color: var(--cyan); }
+  .footer-brand p {
+    font-size: 14px; line-height: 1.7; color: var(--muted);
+    font-weight: 300; max-width: 280px;
+  }
+  .footer-col h4 {
+    font-family: 'DM Mono', monospace; font-size: 10px;
+    letter-spacing: 3px; text-transform: uppercase;
+    color: var(--muted); margin-bottom: 20px;
+  }
+  .footer-col ul { list-style: none; display: flex; flex-direction: column; gap: 12px; }
+  .footer-col ul a {
+    font-size: 15px; color: rgba(240,244,248,.5);
+    text-decoration: none; transition: color .2s;
+  }
+  .footer-col ul a:hover { color: var(--white); }
+  .footer-bottom {
+    display: flex; justify-content: space-between; align-items: center;
+    padding-top: 32px; border-top: 1px solid var(--border);
+  }
+  .footer-bottom p {
+    font-family: 'DM Mono', monospace; font-size: 11px;
+    color: var(--muted); letter-spacing: 1px;
+  }
+
+  /* ── Animations ── */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(28px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes fadeLeft {
+    from { opacity: 0; transform: translateX(28px); }
+    to   { opacity: 1; transform: translateX(0); }
+  }
+  @keyframes ticker {
+    from { transform: translateX(0); }
+    to   { transform: translateX(-50%); }
+  }
+
+  /* ── Reveal on scroll ── */
+  .reveal {
+    opacity: 0; transform: translateY(32px);
+    transition: opacity .65s ease, transform .65s ease;
+  }
+  .reveal.visible {
+    opacity: 1; transform: translateY(0);
+  }
+
+  /* ── Mobile ── */
+  @media (max-width: 900px) {
+    nav { padding: 18px 24px; }
+    .nav-links { display: none; }
+    #hero { padding: 0 24px 60px; }
+    section { padding: 80px 24px; }
+    .why-grid { grid-template-columns: 1fr; }
+    .why-card:nth-child(even) { border-right: 1px solid var(--border); }
+    .why-card:nth-child(3) { border-bottom: 1px solid var(--border); }
+    .product-grid { grid-template-columns: 1fr; gap: 2px; }
+    .how-steps { grid-template-columns: 1fr 1fr; gap: 48px; }
+    .how-steps::before { display: none; }
+    .cta-inner { flex-direction: column; gap: 40px; }
+    .footer-top { grid-template-columns: 1fr 1fr; }
+    .products-header { flex-direction: column; align-items: flex-start; gap: 16px; }
+    .hero-stat-bar { display: none; }
+    .compare-table { font-size: 13px; }
+    .compare-table th, .compare-table td { padding: 12px 10px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Cursor -->
+<div class="cursor" id="cursor">
+  <div class="cursor-ring" id="cursorRing"></div>
+  <div class="cursor-dot" id="cursorDot"></div>
+</div>
+
+<!-- Nav -->
+<nav>
+  <a href="#" class="nav-logo">BREAK<span>AWAY</span></a>
+  <ul class="nav-links">
+    <li><a href="#products">Sticks</a></li>
+    <li><a href="#why">Why Us</a></li>
+    <li><a href="#how">How It Works</a></li>
+    <li><a href="#compare">Compare</a></li>
+  </ul>
+  <a href="#products" class="nav-cta">Shop Now</a>
+</nav>
+
+<!-- Hero -->
+<section id="hero">
+  <div class="hero-bg"></div>
+  <div class="ice-lines"></div>
+  <div class="grid-overlay"></div>
+
+  <p class="hero-tag">Hockey Direct — No Middlemen</p>
+  <h1>
+    THE STICK<br>
+    <span class="line2">THEY DON'T</span><br>
+    WANT YOU TO BUY
+  </h1>
+  <p class="hero-sub">
+    Pro-grade composite sticks shipped direct from the manufacturer. 
+    No retail markup. No inflated brand tax. Just the best stick 
+    you've ever held — at a price that makes sense.
+  </p>
+  <div class="hero-actions">
+    <a href="#products" class="btn-primary">Shop Sticks</a>
+    <a href="#why" class="btn-ghost">
+      <span class="arrow"></span>
+      See Why We're Different
+    </a>
+  </div>
+
+  <div class="hero-stat-bar">
+    <div class="stat">
+      <span class="stat-num"><em>40</em>%</span>
+      <span class="stat-label">Less Than Big Brands</span>
+    </div>
+    <div class="stat-divider"></div>
+    <div class="stat">
+      <span class="stat-num"><em>0</em></span>
+      <span class="stat-label">Retail Middlemen</span>
+    </div>
+    <div class="stat-divider"></div>
+    <div class="stat">
+      <span class="stat-num"><em>100</em>%</span>
+      <span class="stat-label">Carbon Composite</span>
+    </div>
+  </div>
+</section>
+
+<!-- Ticker -->
+<div class="ticker">
+  <div class="ticker-inner">
+    <!-- repeated for seamless loop -->
+    <span class="ticker-item">DIRECT FROM MANUFACTURER<span class="ticker-dot"></span></span>
+    <span class="ticker-item">PRO-GRADE CARBON FIBER<span class="ticker-dot"></span></span>
+    <span class="ticker-item">FREE SHIPPING OVER $150<span class="ticker-dot"></span></span>
+    <span class="ticker-item">30-DAY MONEY BACK<span class="ticker-dot"></span></span>
+    <span class="ticker-item">LIFETIME BREAKAGE WARRANTY<span class="ticker-dot"></span></span>
+    <span class="ticker-item">CUT THE MIDDLEMAN<span class="ticker-dot"></span></span>
+    <span class="ticker-item">DIRECT FROM MANUFACTURER<span class="ticker-dot"></span></span>
+    <span class="ticker-item">PRO-GRADE CARBON FIBER<span class="ticker-dot"></span></span>
+    <span class="ticker-item">FREE SHIPPING OVER $150<span class="ticker-dot"></span></span>
+    <span class="ticker-item">30-DAY MONEY BACK<span class="ticker-dot"></span></span>
+    <span class="ticker-item">LIFETIME BREAKAGE WARRANTY<span class="ticker-dot"></span></span>
+    <span class="ticker-item">CUT THE MIDDLEMAN<span class="ticker-dot"></span></span>
+  </div>
+</div>
+
+<!-- Why Us -->
+<section id="why">
+  <p class="section-label reveal">The Breakaway Difference</p>
+  <h2 class="reveal">WHY THE BIG<br>BRANDS <em>HATE US</em></h2>
+  <div class="why-grid">
+    <div class="why-card reveal">
+      <span class="why-num">01</span>
+      <svg class="why-icon" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.5">
+        <path d="M6 24L24 6l18 18M10 20v18h28V20"/>
+        <rect x="18" y="30" width="12" height="10"/>
+      </svg>
+      <h3>Factory Direct</h3>
+      <p>We work directly with the same Tier-1 composite manufacturers that supply the big brands — then ship straight to your door. Zero distributors. Zero retailer margins.</p>
+      <span class="tag">Direct-to-Consumer</span>
+    </div>
+    <div class="why-card reveal">
+      <span class="why-num">02</span>
+      <svg class="why-icon" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.5">
+        <circle cx="24" cy="24" r="18"/>
+        <path d="M24 12v12l8 8"/>
+      </svg>
+      <h3>Same Materials, Half The Wait</h3>
+      <p>100% high-modulus carbon fiber. Same stiffness ratings, same blade profiles, same blade materials used by professionals — built to the same tolerances, delivered faster.</p>
+      <span class="tag">Pro-Grade Carbon</span>
+    </div>
+    <div class="why-card reveal">
+      <span class="why-num">03</span>
+      <svg class="why-icon" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.5">
+        <path d="M8 30l8-8 6 6 10-14 8 6"/>
+        <path d="M6 42h36"/>
+      </svg>
+      <h3>Radical Transparency</h3>
+      <p>We publish our cost breakdown for every stick. Materials. Labour. Shipping. Our margin. No mystery pricing, no lifestyle brand tax. You decide if it's worth it.</p>
+      <span class="tag">Open Pricing</span>
+    </div>
+    <div class="why-card reveal">
+      <span class="why-num">04</span>
+      <svg class="why-icon" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.5">
+        <path d="M24 4l4 12h12l-10 8 4 12-10-8-10 8 4-12L8 16h12z"/>
+      </svg>
+      <h3>No Hype. Just Hockey.</h3>
+      <p>We don't pay superstar endorsements or buy shelf space at big-box chains. Every dollar saved on marketing goes back into material quality and your wallet.</p>
+      <span class="tag">Zero Endorsements</span>
+    </div>
+  </div>
+</section>
+
+<!-- Products -->
+<section id="products">
+  <div class="products-header">
+    <div>
+      <p class="section-label reveal">Current Lineup</p>
+      <h2 class="reveal">THE <em>STICKS</em></h2>
+    </div>
+    <a href="#" class="see-all reveal">Full Catalog →</a>
+  </div>
+  <div class="product-grid">
+
+    <!-- Stick 1 -->
+    <div class="product-card reveal">
+      <span class="product-badge badge-new">New</span>
+      <div class="product-visual">
+        <svg class="stick-svg" viewBox="0 0 200 140" fill="none">
+          <defs>
+            <linearGradient id="s1" x1="0" y1="0" x2="200" y2="0">
+              <stop offset="0%" stop-color="#00c8f0" stop-opacity=".9"/>
+              <stop offset="100%" stop-color="#0a4a5a"/>
+            </linearGradient>
+          </defs>
+          <rect x="16" y="62" width="148" height="8" rx="2" fill="url(#s1)"/>
+          <rect x="12" y="64" width="156" height="4" rx="2" fill="rgba(0,200,240,.15)"/>
+          <path d="M164 66 L188 72 L188 80 L172 78 Z" fill="#00c8f0" opacity=".9"/>
+          <line x1="50" y1="62" x2="50" y2="70" stroke="rgba(0,200,240,.3)" stroke-width="1"/>
+          <line x1="90" y1="62" x2="90" y2="70" stroke="rgba(0,200,240,.3)" stroke-width="1"/>
+          <line x1="130" y1="62" x2="130" y2="70" stroke="rgba(0,200,240,.3)" stroke-width="1"/>
+          <text x="70" y="55" fill="rgba(0,200,240,.6)" font-family="Bebas Neue" font-size="12" letter-spacing="3">APEX 85</text>
+        </svg>
+      </div>
+      <p class="product-name">APEX 85</p>
+      <p class="product-model">BKW-AX85-LH · 85 FLEX</p>
+      <div class="product-specs">
+        <div class="spec-row"><span class="spec-key">Flex</span><span class="spec-val">85</span></div>
+        <div class="spec-row"><span class="spec-key">Material</span><span class="spec-val">100% Carbon</span></div>
+        <div class="spec-row"><span class="spec-key">Weight</span><span class="spec-val">355g</span></div>
+        <div class="spec-row"><span class="spec-key">Kick Point</span><span class="spec-val">Mid-Low</span></div>
+      </div>
+      <div class="product-price">
+        <span class="price-now">$159</span>
+        <span class="price-retail">$299 retail</span>
+        <span class="price-save">SAVE 47%</span>
+      </div>
+      <button class="btn-add">Add to Cart</button>
+    </div>
+
+    <!-- Stick 2 -->
+    <div class="product-card reveal">
+      <span class="product-badge badge-hot">Best Seller</span>
+      <div class="product-visual">
+        <svg class="stick-svg" viewBox="0 0 200 140" fill="none">
+          <defs>
+            <linearGradient id="s2" x1="0" y1="0" x2="200" y2="0">
+              <stop offset="0%" stop-color="#ff2c4b" stop-opacity=".9"/>
+              <stop offset="100%" stop-color="#5a0a14"/>
+            </linearGradient>
+          </defs>
+          <rect x="16" y="62" width="148" height="8" rx="2" fill="url(#s2)"/>
+          <rect x="12" y="64" width="156" height="4" rx="2" fill="rgba(255,44,75,.15)"/>
+          <path d="M164 66 L188 72 L188 80 L172 78 Z" fill="#ff2c4b" opacity=".9"/>
+          <line x1="50" y1="62" x2="50" y2="70" stroke="rgba(255,44,75,.3)" stroke-width="1"/>
+          <line x1="90" y1="62" x2="90" y2="70" stroke="rgba(255,44,75,.3)" stroke-width="1"/>
+          <line x1="130" y1="62" x2="130" y2="70" stroke="rgba(255,44,75,.3)" stroke-width="1"/>
+          <text x="58" y="55" fill="rgba(255,44,75,.7)" font-family="Bebas Neue" font-size="12" letter-spacing="3">SLAPSHOT PRO</text>
+        </svg>
+      </div>
+      <p class="product-name">SLAPSHOT PRO</p>
+      <p class="product-model">BKW-SP75-RH · 75 FLEX</p>
+      <div class="product-specs">
+        <div class="spec-row"><span class="spec-key">Flex</span><span class="spec-val">75</span></div>
+        <div class="spec-row"><span class="spec-key">Material</span><span class="spec-val">100% Carbon</span></div>
+        <div class="spec-row"><span class="spec-key">Weight</span><span class="spec-val">370g</span></div>
+        <div class="spec-row"><span class="spec-key">Kick Point</span><span class="spec-val">Low</span></div>
+      </div>
+      <div class="product-price">
+        <span class="price-now">$139</span>
+        <span class="price-retail">$259 retail</span>
+        <span class="price-save">SAVE 46%</span>
+      </div>
+      <button class="btn-add">Add to Cart</button>
+    </div>
+
+    <!-- Stick 3 -->
+    <div class="product-card reveal">
+      <span class="product-badge badge-pro">Pro Series</span>
+      <div class="product-visual">
+        <svg class="stick-svg" viewBox="0 0 200 140" fill="none">
+          <defs>
+            <linearGradient id="s3" x1="0" y1="0" x2="200" y2="0">
+              <stop offset="0%" stop-color="#c8e8f5" stop-opacity=".9"/>
+              <stop offset="100%" stop-color="#2a3a4a"/>
+            </linearGradient>
+          </defs>
+          <rect x="16" y="62" width="148" height="8" rx="2" fill="url(#s3)"/>
+          <rect x="12" y="64" width="156" height="4" rx="2" fill="rgba(200,232,245,.1)"/>
+          <path d="M164 66 L188 72 L188 80 L172 78 Z" fill="#c8e8f5" opacity=".9"/>
+          <line x1="50" y1="62" x2="50" y2="70" stroke="rgba(200,232,245,.2)" stroke-width="1"/>
+          <line x1="90" y1="62" x2="90" y2="70" stroke="rgba(200,232,245,.2)" stroke-width="1"/>
+          <line x1="130" y1="62" x2="130" y2="70" stroke="rgba(200,232,245,.2)" stroke-width="1"/>
+          <text x="62" y="55" fill="rgba(200,232,245,.5)" font-family="Bebas Neue" font-size="12" letter-spacing="3">PHANTOM X</text>
+        </svg>
+      </div>
+      <p class="product-name">PHANTOM X</p>
+      <p class="product-model">BKW-PX100-RH · 100 FLEX</p>
+      <div class="product-specs">
+        <div class="spec-row"><span class="spec-key">Flex</span><span class="spec-val">100</span></div>
+        <div class="spec-row"><span class="spec-key">Material</span><span class="spec-val">TenoX Carbon</span></div>
+        <div class="spec-row"><span class="spec-key">Weight</span><span class="spec-val">330g</span></div>
+        <div class="spec-row"><span class="spec-key">Kick Point</span><span class="spec-val">High</span></div>
+      </div>
+      <div class="product-price">
+        <span class="price-now">$199</span>
+        <span class="price-retail">$349 retail</span>
+        <span class="price-save">SAVE 43%</span>
+      </div>
+      <button class="btn-add">Add to Cart</button>
+    </div>
+
+  </div>
+</section>
+
+<!-- How It Works -->
+<section id="how">
+  <p class="section-label reveal">The Process</p>
+  <h2 class="reveal">HOW IT <em>WORKS</em></h2>
+  <div class="how-steps">
+    <div class="step reveal">
+      <div class="step-num">01</div>
+      <h3>You Order Online</h3>
+      <p>Choose your flex, curve, and grip. No retail store visit needed. Configurator on our site handles everything.</p>
+    </div>
+    <div class="step reveal">
+      <div class="step-num">02</div>
+      <h3>Factory Picks & Packs</h3>
+      <p>Your order goes straight to the production floor. Quality-checked by the same hands that built it — not a warehouse temp.</p>
+    </div>
+    <div class="step reveal">
+      <div class="step-num">03</div>
+      <h3>Shipped Directly To You</h3>
+      <p>Tracked shipping direct from factory to door. No warehouses, no redistribution hubs adding cost and time.</p>
+    </div>
+    <div class="step reveal">
+      <div class="step-num">04</div>
+      <h3>Play. Guaranteed.</h3>
+      <p>30-day money-back guarantee. Lifetime breakage warranty on manufacturing defects. If it snaps wrong, we replace it.</p>
+    </div>
+  </div>
+</section>
+
+<!-- Comparison -->
+<section id="compare">
+  <p class="section-label reveal">Honest Comparison</p>
+  <h2 class="reveal">US VS. <em>THEM</em></h2>
+  <table class="compare-table reveal">
+    <thead>
+      <tr>
+        <th style="text-align:left">Feature</th>
+        <th class="us">Breakaway</th>
+        <th>Big Brand A</th>
+        <th>Big Brand B</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Entry-Level Stick Price</td>
+        <td class="us">$89</td>
+        <td>$149–$199</td>
+        <td>$169–$229</td>
+      </tr>
+      <tr>
+        <td>Top-Tier Stick Price</td>
+        <td class="us">$199</td>
+        <td>$320–$380</td>
+        <td>$299–$399</td>
+      </tr>
+      <tr>
+        <td>100% Carbon Construction</td>
+        <td class="us"><span class="check">✓</span></td>
+        <td><span class="check">✓</span></td>
+        <td><span class="cross">✗ (entry)</span></td>
+      </tr>
+      <tr>
+        <td>Direct Factory Shipping</td>
+        <td class="us"><span class="check">✓</span></td>
+        <td><span class="cross">✗</span></td>
+        <td><span class="cross">✗</span></td>
+      </tr>
+      <tr>
+        <td>Transparent Cost Breakdown</td>
+        <td class="us"><span class="check">✓</span></td>
+        <td><span class="cross">✗</span></td>
+        <td><span class="cross">✗</span></td>
+      </tr>
+      <tr>
+        <td>Breakage Warranty</td>
+        <td class="us"><span class="check">✓ Lifetime</span></td>
+        <td><span class="cross">✗</span></td>
+        <td><span class="cross">✗</span></td>
+      </tr>
+      <tr>
+        <td>30-Day Money Back</td>
+        <td class="us"><span class="check">✓</span></td>
+        <td><span class="cross">✗</span></td>
+        <td><span class="cross">✗</span></td>
+      </tr>
+      <tr>
+        <td>Retail Markup Layer</td>
+        <td class="us" style="color: var(--cyan)">None</td>
+        <td>35–50%</td>
+        <td>30–45%</td>
+      </tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- CTA -->
+<section id="cta">
+  <div class="cta-inner">
+    <div class="cta-left">
+      <h2>DONE PAYING<br>BRAND TAX?</h2>
+      <p>Join thousands of players who made the switch to factory-direct gear. Same quality. Real savings. Better experience.</p>
+    </div>
+    <a href="#products" class="btn-dark">Shop All Sticks</a>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer>
+  <div class="footer-top">
+    <div class="footer-brand">
+      <span class="logo">BREAK<span>AWAY</span></span>
+      <p>Factory-direct hockey sticks for players who know the difference between a brand name and a great stick.</p>
+    </div>
+    <div class="footer-col">
+      <h4>Shop</h4>
+      <ul>
+        <li><a href="#">All Sticks</a></li>
+        <li><a href="#">Accessories</a></li>
+        <li><a href="#">Bundle Deals</a></li>
+        <li><a href="#">Sale</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Company</h4>
+      <ul>
+        <li><a href="#">Our Story</a></li>
+        <li><a href="#">How We Price</a></li>
+        <li><a href="#">Manufacturing</a></li>
+        <li><a href="#">Press</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Support</h4>
+      <ul>
+        <li><a href="#">Sizing Guide</a></li>
+        <li><a href="#">Warranty</a></li>
+        <li><a href="#">Returns</a></li>
+        <li><a href="#">Contact</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p>© 2026 Breakaway Direct Hockey Co. — All Rights Reserved</p>
+    <p>Built for players. Priced for players.</p>
+  </div>
+</footer>
+
+<script>
+  // Custom cursor
+  const dot  = document.getElementById('cursorDot');
+  const ring = document.getElementById('cursorRing');
+  let mx = 0, my = 0, rx = 0, ry = 0;
+
+  document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; });
+
+  (function loop() {
+    dot.style.left  = mx + 'px';
+    dot.style.top   = my + 'px';
+    rx += (mx - rx) * 0.12;
+    ry += (my - ry) * 0.12;
+    ring.style.left = rx + 'px';
+    ring.style.top  = ry + 'px';
+    requestAnimationFrame(loop);
+  })();
+
+  // Scroll reveal
+  const reveals = document.querySelectorAll('.reveal');
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('visible');
+        // stagger siblings
+        const siblings = [...e.target.parentElement.querySelectorAll('.reveal')];
+        const idx = siblings.indexOf(e.target);
+        e.target.style.transitionDelay = (idx * 0.1) + 's';
+      }
+    });
+  }, { threshold: 0.12 });
+  reveals.forEach(r => obs.observe(r));
+</script>
+</body>
+</html>
