@@ -91,6 +91,11 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:cen
 .back-link{margin-top:40px;font-family:'DM Mono',monospace;font-size:12px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);text-decoration:none;transition:color .2s}
 .back-link:hover{color:var(--purple)}
 
+/* CURVE BUTTONS */
+.curve-btn{width:100%;padding:16px;background:var(--panel);border:1.5px solid var(--border);color:var(--white);font-family:'Rajdhani',sans-serif;font-size:14px;text-align:left;border-radius:4px;cursor:pointer;transition:all .2s;display:flex}
+.curve-btn:hover{border-color:var(--purple);background:rgba(139,47,201,.15)}
+.curve-btn.active{border-color:var(--purple);background:var(--purple);color:#fff}
+
 /* ANIMATIONS */
 @keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
 .builder-form{animation:fadeUp .6s .2s both}
@@ -180,22 +185,144 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:cen
       <!-- CURVE CATEGORY -->
       <div class="builder-section">
         <h3>Blade Curve</h3>
-        <p>14 professional curves to choose from</p>
-        <div class="option-grid triple">
-          <button class="option-btn active" data-curve="P92">P92</button>
-          <button class="option-btn" data-curve="P88">P88</button>
-          <button class="option-btn" data-curve="P28">P28</button>
-          <button class="option-btn" data-curve="PM9">PM9</button>
-          <button class="option-btn" data-curve="P91A">P91A</button>
-          <button class="option-btn" data-curve="P02">P02</button>
-          <button class="option-btn" data-curve="P14">P14</button>
-          <button class="option-btn" data-curve="P92M">P92M</button>
-          <button class="option-btn" data-curve="P90TM">P90TM</button>
-          <button class="option-btn" data-curve="P77">P77</button>
-          <button class="option-btn" data-curve="OVI">OVI</button>
-          <button class="option-btn" data-curve="P28M">P28M</button>
-          <button class="option-btn" data-curve="P86">P86</button>
-          <button class="option-btn" data-curve="P17M">P17M</button>
+        <p>Select the pattern that matches your playing style</p>
+        <div id="curve-grid" style="display:grid;grid-template-columns:1fr;gap:12px;max-height:400px;overflow-y:auto">
+          <button class="curve-btn active" data-curve="P92" data-desc="Top drags · Control · Top shelf" data-lie="SR/INT: 10.5 JR: 10" data-curve-type="Mid-Toe" data-face="Open" data-toe="Round" data-length="Medium">
+            <div style="display:flex;justify-content:space-between;align-items:center;width:100%">
+              <div style="text-align:left">
+                <div style="font-weight:600;font-size:16px">P92</div>
+                <div style="font-size:12px;color:rgba(238,242,255,.6)">Top drags · Control · Top shelf</div>
+              </div>
+              <div style="font-size:12px;color:var(--muted)">Mid-Toe | Open</div>
+            </div>
+          </button>
+          <button class="curve-btn" data-curve="P88" data-desc="Wrist shots · Handling" data-lie="SR/INT: 10 JR: 9.5" data-curve-type="Mid" data-face="Slight Open" data-toe="Round" data-length="Medium">
+            <div style="display:flex;justify-content:space-between;align-items:center;width:100%">
+              <div style="text-align:left">
+                <div style="font-weight:600;font-size:16px">P88</div>
+                <div style="font-size:12px;color:rgba(238,242,255,.6)">Wrist shots · Handling</div>
+              </div>
+              <div style="font-size:12px;color:var(--muted)">Mid | Slight Open</div>
+            </div>
+          </button>
+          <button class="curve-btn" data-curve="P28" data-desc="Top drags · Control · Top shelf" data-lie="SR/INT: 10.5 JR: 10" data-curve-type="Mid-Toe" data-face="Open" data-toe="Round" data-length="Medium">
+            <div style="display:flex;justify-content:space-between;align-items:center;width:100%">
+              <div style="text-align:left">
+                <div style="font-weight:600;font-size:16px">P28</div>
+                <div style="font-size:12px;color:rgba(238,242,255,.6)">Top drags · Control · Top shelf</div>
+              </div>
+              <div style="font-size:12px;color:var(--muted)">Mid-Toe | Open</div>
+            </div>
+          </button>
+          <button class="curve-btn" data-curve="PM9" data-desc="Passing · Handling front & back" data-lie="SR/INT: 9.5 JR: 9" data-curve-type="Mid-Heel" data-face="Open" data-toe="Round" data-length="Medium">
+            <div style="display:flex;justify-content:space-between;align-items:center;width:100%">
+              <div style="text-align:left">
+                <div style="font-weight:600;font-size:16px">PM9</div>
+                <div style="font-size:12px;color:rgba(238,242,255,.6)">Passing · Handling front & back</div>
+              </div>
+              <div style="font-size:12px;color:var(--muted)">Mid-Heel | Open</div>
+            </div>
+          </button>
+          <button class="curve-btn" data-curve="P91A" data-desc="Top shelf · Deflections" data-lie="SR: 10.5 JR: 10" data-curve-type="Mid-Heel" data-face="Open" data-toe="Round" data-length="Long">
+            <div style="display:flex;justify-content:space-between;align-items:center;width:100%">
+              <div style="text-align:left">
+                <div style="font-weight:600;font-size:16px">P91A</div>
+                <div style="font-size:12px;color:rgba(238,242,255,.6)">Top shelf · Deflections</div>
+              </div>
+              <div style="font-size:12px;color:var(--muted)">Mid-Heel | Open</div>
+            </div>
+          </button>
+          <button class="curve-btn" data-curve="P02" data-desc="Top drags · Snapshots" data-lie="SR/INT: 11.5" data-curve-type="Heel" data-face="Open" data-toe="Square" data-length="Long">
+            <div style="display:flex;justify-content:space-between;align-items:center;width:100%">
+              <div style="text-align:left">
+                <div style="font-weight:600;font-size:16px">P02</div>
+                <div style="font-size:12px;color:rgba(238,242,255,.6)">Top drags · Snapshots</div>
+              </div>
+              <div style="font-size:12px;color:var(--muted)">Heel | Open</div>
+            </div>
+          </button>
+          <button class="curve-btn" data-curve="P14" data-desc="Ultimate shooter · Top drags" data-lie="SR/INT: 10.5 JR: 10" data-curve-type="Mid-Toe" data-face="Slight Open" data-toe="Round" data-length="Medium">
+            <div style="display:flex;justify-content:space-between;align-items:center;width:100%">
+              <div style="text-align:left">
+                <div style="font-weight:600;font-size:16px">P14</div>
+                <div style="font-size:12px;color:rgba(238,242,255,.6)">Ultimate shooter · Top drags</div>
+              </div>
+              <div style="font-size:12px;color:var(--muted)">Mid-Toe | Slight Open</div>
+            </div>
+          </button>
+          <button class="curve-btn" data-curve="P92M" data-desc="Versatile all-purpose" data-lie="SR/INT: 10.5" data-curve-type="Mid-Toe" data-face="Open" data-toe="Round" data-length="Medium">
+            <div style="display:flex;justify-content:space-between;align-items:center;width:100%">
+              <div style="text-align:left">
+                <div style="font-weight:600;font-size:16px">P92M</div>
+                <div style="font-size:12px;color:rgba(238,242,255,.6)">Versatile all-purpose</div>
+              </div>
+              <div style="font-size:12px;color:var(--muted)">Mid-Toe | Open</div>
+            </div>
+          </button>
+          <button class="curve-btn" data-curve="P90TM" data-desc="Responsive feel" data-lie="SR/INT: 10.5" data-curve-type="Mid-Toe" data-face="Open" data-toe="Round" data-length="Medium">
+            <div style="display:flex;justify-content:space-between;align-items:center;width:100%">
+              <div style="text-align:left">
+                <div style="font-weight:600;font-size:16px">P90TM</div>
+                <div style="font-size:12px;color:rgba(238,242,255,.6)">Responsive feel</div>
+              </div>
+              <div style="font-size:12px;color:var(--muted)">Mid-Toe | Open</div>
+            </div>
+          </button>
+          <button class="curve-btn" data-curve="P77" data-desc="Balanced control" data-lie="SR/INT: 10" data-curve-type="Mid" data-face="Open" data-toe="Round" data-length="Medium">
+            <div style="display:flex;justify-content:space-between;align-items:center;width:100%">
+              <div style="text-align:left">
+                <div style="font-weight:600;font-size:16px">P77</div>
+                <div style="font-size:12px;color:rgba(238,242,255,.6)">Balanced control</div>
+              </div>
+              <div style="font-size:12px;color:var(--muted)">Mid | Open</div>
+            </div>
+          </button>
+          <button class="curve-btn" data-curve="OVI" data-desc="Specialty pattern" data-lie="SR/INT: 10.5" data-curve-type="Mid-Toe" data-face="Open" data-toe="Round" data-length="Medium">
+            <div style="display:flex;justify-content:space-between;align-items:center;width:100%">
+              <div style="text-align:left">
+                <div style="font-weight:600;font-size:16px">OVI</div>
+                <div style="font-size:12px;color:rgba(238,242,255,.6)">Specialty pattern</div>
+              </div>
+              <div style="font-size:12px;color:var(--muted)">Mid-Toe | Open</div>
+            </div>
+          </button>
+          <button class="curve-btn" data-curve="P28M" data-desc="Control-oriented" data-lie="SR/INT: 10.5" data-curve-type="Mid-Toe" data-face="Open" data-toe="Round" data-length="Medium">
+            <div style="display:flex;justify-content:space-between;align-items:center;width:100%">
+              <div style="text-align:left">
+                <div style="font-weight:600;font-size:16px">P28M</div>
+                <div style="font-size:12px;color:rgba(238,242,255,.6)">Control-oriented</div>
+              </div>
+              <div style="font-size:12px;color:var(--muted)">Mid-Toe | Open</div>
+            </div>
+          </button>
+          <button class="curve-btn" data-curve="P86" data-desc="All-purpose feel" data-lie="SR/INT: 10" data-curve-type="Mid" data-face="Open" data-toe="Round" data-length="Medium">
+            <div style="display:flex;justify-content:space-between;align-items:center;width:100%">
+              <div style="text-align:left">
+                <div style="font-weight:600;font-size:16px">P86</div>
+                <div style="font-size:12px;color:rgba(238,242,255,.6)">All-purpose feel</div>
+              </div>
+              <div style="font-size:12px;color:var(--muted)">Mid | Open</div>
+            </div>
+          </button>
+          <button class="curve-btn" data-curve="P17M" data-desc="Nuanced curve" data-lie="SR/INT: 10.5" data-curve-type="Mid-Toe" data-face="Open" data-toe="Round" data-length="Medium">
+            <div style="display:flex;justify-content:space-between;align-items:center;width:100%">
+              <div style="text-align:left">
+                <div style="font-weight:600;font-size:16px">P17M</div>
+                <div style="font-size:12px;color:rgba(238,242,255,.6)">Nuanced curve</div>
+              </div>
+              <div style="font-size:12px;color:var(--muted)">Mid-Toe | Open</div>
+            </div>
+          </button>
+        </div>
+        <div id="curve-details" style="margin-top:20px;padding:16px;background:rgba(139,47,201,.1);border:1px solid var(--border);border-radius:4px;display:none">
+          <div style="font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:12px">Blade Characteristics</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;font-size:14px">
+            <div><span style="color:var(--muted)">Lie Angle:</span> <span id="curve-lie" style="color:var(--white)">—</span></div>
+            <div><span style="color:var(--muted)">Curve Type:</span> <span id="curve-curve" style="color:var(--white)">—</span></div>
+            <div><span style="color:var(--muted)">Face:</span> <span id="curve-face" style="color:var(--white)">—</span></div>
+            <div><span style="color:var(--muted)">Toe:</span> <span id="curve-toe" style="color:var(--white)">—</span></div>
+            <div><span style="color:var(--muted)">Length:</span> <span id="curve-length" style="color:var(--white)">—</span></div>
+          </div>
         </div>
       </div>
 
@@ -312,6 +439,19 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:cen
     grip: 'Tactile Grip'
   };
 
+  // Initialize curve details for default P92
+  document.addEventListener('DOMContentLoaded', () => {
+    const defaultCurve = document.querySelector('[data-curve="P92"]');
+    if (defaultCurve) {
+      document.getElementById('curve-lie').textContent = defaultCurve.dataset.lie;
+      document.getElementById('curve-curve').textContent = defaultCurve.dataset.curveType;
+      document.getElementById('curve-face').textContent = defaultCurve.dataset.face;
+      document.getElementById('curve-toe').textContent = defaultCurve.dataset.toe;
+      document.getElementById('curve-length').textContent = defaultCurve.dataset.length;
+      document.getElementById('curve-details').style.display = 'block';
+    }
+  });
+
   // UPDATE PREVIEW
   function updatePreview() {
     document.getElementById('preview-flex').textContent = config.flex + (config.flexType === 'senior' ? ' Senior' : ' Intermediate');
@@ -375,9 +515,20 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:cen
 
   document.querySelectorAll('[data-curve]').forEach(btn => {
     btn.addEventListener('click', e => {
-      config.curve = e.target.dataset.curve;
+      const button = e.target.closest('.curve-btn') || e.target;
+      config.curve = button.dataset.curve;
+      
       document.querySelectorAll('[data-curve]').forEach(b => b.classList.remove('active'));
-      e.target.classList.add('active');
+      button.classList.add('active');
+      
+      // Show curve details
+      document.getElementById('curve-lie').textContent = button.dataset.lie;
+      document.getElementById('curve-curve').textContent = button.dataset.curveType;
+      document.getElementById('curve-face').textContent = button.dataset.face;
+      document.getElementById('curve-toe').textContent = button.dataset.toe;
+      document.getElementById('curve-length').textContent = button.dataset.length;
+      document.getElementById('curve-details').style.display = 'block';
+      
       updatePreview();
     });
   });
