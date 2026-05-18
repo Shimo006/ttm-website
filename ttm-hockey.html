@@ -61,8 +61,9 @@ h1 .dim{color:var(--muted);font-size:35%;letter-spacing:18px;display:block;margi
 .arrow::after{content:'';position:absolute;right:0;top:-4px;border:4px solid transparent;border-left-color:currentColor}
 
 /* STICK HERO IMAGE */
-.hero-stick-wrap{position:absolute;right:-40px;top:50%;transform:translateY(-50%);z-index:0;opacity:0;animation:fadeL .8s .4s forwards;pointer-events:none}
-.hero-stick-wrap img{width:600px;max-width:55vw;opacity:.4;filter:drop-shadow(0 0 40px rgba(139,47,201,.3))}
+.hero-stick-wrap{position:absolute;right:4%;top:36%;width:820px;max-width:92vw;z-index:1;opacity:.88;animation:fadeL .8s .4s forwards;pointer-events:none;filter:drop-shadow(0 0 90px rgba(139,47,201,.35))}
+.hero-stick-wrap svg{width:100%;height:auto;display:block}
+.hero-stick-wrap::before{content:'';position:absolute;inset:0;background:linear-gradient(180deg,transparent 0%,rgba(6,8,15,.25) 100%);pointer-events:none}
 
 /* STATS BAR */
 .hero-stats{position:absolute;right:48px;bottom:80px;z-index:1;display:flex;flex-direction:column;gap:20px;align-items:flex-end;opacity:0;animation:fadeL .7s .8s forwards}
@@ -254,7 +255,22 @@ footer{background:var(--dark);border-top:1px solid var(--border);padding:60px 48
   <div class="hero-stripe2"></div>
 
   <div class="hero-stick-wrap">
-    <img id="stick-img" src="" alt="TTM Hockey Stick">
+    <svg class="hero-stick-svg" viewBox="0 0 820 260" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="heroGrad1" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0%" stop-color="#8b2fc9"/>
+          <stop offset="100%" stop-color="#4060e0"/>
+        </linearGradient>
+      </defs>
+      <rect x="0" y="32" width="700" height="12" rx="6" fill="url(#heroGrad1)" opacity=".96"/>
+      <rect x="18" y="82" width="670" height="12" rx="6" fill="url(#heroGrad1)" opacity=".8"/>
+      <rect x="36" y="142" width="640" height="12" rx="6" fill="url(#heroGrad1)" opacity=".65"/>
+      <path d="M700 26 L770 42 L770 58 L714 52 Z" fill="#8b2fc9" opacity=".85"/>
+      <path d="M690 76 L765 92 L765 108 L712 102 Z" fill="#4060e0" opacity=".75"/>
+      <path d="M680 136 L760 152 L760 168 L710 162 Z" fill="#8b2fc9" opacity=".65"/>
+      <rect x="4" y="24" width="20" height="80" rx="8" fill="rgba(255,255,255,.05)"/>
+      <rect x="22" y="22" width="20" height="80" rx="8" fill="rgba(255,255,255,.03)"/>
+    </svg>
   </div>
 
   <p class="h-tag">To The Max Hockey — Direct from Factory</p>
@@ -265,6 +281,7 @@ footer{background:var(--dark);border-top:1px solid var(--border);padding:60px 48
   </h1>
   <p class="hero-sub">
     Pro-grade composite hockey sticks shipped factory-direct. The big brands charge $300+ for sticks built in the same factories as ours. We cut the middleman and pass the savings straight to you.
+    Custom builds start at $105.
   </p>
   <div class="hero-acts">
     <a href="#products" class="btn-p">Shop TTM Sticks</a>
@@ -300,6 +317,7 @@ footer{background:var(--dark);border-top:1px solid var(--border);padding:60px 48
     <span class="tick-item">14 BLADE CURVES<span class="tick-dot"></span></span>
     <span class="tick-item">SENIOR &amp; JUNIOR FLEX<span class="tick-dot"></span></span>
     <span class="tick-item">4 CUSTOM GRIP OPTIONS<span class="tick-dot"></span></span>
+    <span class="tick-item">CUSTOM BUILDS STARTING AT $105<span class="tick-dot"></span></span>
     <span class="tick-item">HIGH · MID · LOW · HYBRID KICKPOINT<span class="tick-dot"></span></span>
     <span class="tick-item">TTM HOCKEY — TO THE MAX<span class="tick-dot"></span></span>
     <span class="tick-item">FACTORY DIRECT<span class="tick-dot"></span></span>
